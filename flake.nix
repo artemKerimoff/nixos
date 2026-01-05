@@ -11,8 +11,13 @@
     ambxst.url = "github:darsh032/ambxst-fork-for-pr-idk/nix";
   };
 
-  outputs = inputs@{self, nixpkgs, home-manager, ambxst, ...}:
-  let
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    home-manager,
+    ambxst,
+    ...
+  }: let
     system = "x86_64-linux";
   in {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
@@ -24,13 +29,16 @@
 
       modules = [
         ./configuration.nix
-                
+
         home-manager.nixosModules.home-manager
 
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.artem = import ./home.nix;
+          home-manager.extraSpecialArgs = {
+            inherit inputs ambxst;
+          };
         }
       ];
     };

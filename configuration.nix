@@ -1,14 +1,16 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, lib, ... }:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -21,9 +23,8 @@
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -49,7 +50,6 @@
   # Virtualization
   virtualisation.docker.enable = true;
 
-
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -58,10 +58,10 @@
   services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
-#  services.xserver.xkb = {
-#    layout = "ru";
-#    variant = "";
-#  };
+  #  services.xserver.xkb = {
+  #    layout = "ru";
+  #    variant = "";
+  #  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -89,9 +89,9 @@
   users.users.artem = {
     isNormalUser = true;
     description = "artem";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = ["networkmanager" "wheel" "docker"];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -104,7 +104,6 @@
     enable = true;
   };
 
-  
   # MongoDB service
   services.mongodb.enable = true;
   services.mongodb.package = pkgs.mongodb-ce;
@@ -113,7 +112,7 @@
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_18;
-    ensureDatabases = [ "mydatabase" ];
+    ensureDatabases = ["mydatabase"];
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser    auth-method
       local all       postgres  peer
@@ -129,20 +128,20 @@
   programs.appimage.binfmt = true;
 
   programs.appimage.package = pkgs.appimage-run.override {
-    extraPkgs = pkgs: with pkgs; [
-      # Добавьте сюда libepoxy и любые другие недостающие библиотеки
-      libepoxy
-      # Возможно, вам понадобятся другие библиотеки в будущем, например:
-      # xorg.libX11
-      # stdenv.cc.cc.lib
-      # zlib
-      # icu
-    ];
-  };  
+    extraPkgs = pkgs:
+      with pkgs; [
+        # Добавьте сюда libepoxy и любые другие недостающие библиотеки
+        libepoxy
+        # Возможно, вам понадобятся другие библиотеки в будущем, например:
+        # xorg.libX11
+        # stdenv.cc.cc.lib
+        # zlib
+        # icu
+      ];
+  };
 
   # Install firefox.
   programs.firefox.enable = true;
-
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = with pkgs; [
@@ -191,7 +190,7 @@
     libglvnd
     mesa
 
-   # GTK и Electron
+    # GTK и Electron
     gtk3
     gtk2
     atk
@@ -220,7 +219,7 @@
     cups
     expat
     libdrm
-  ];  
+  ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -228,82 +227,79 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  wget
-  vscode
-  git
-  mongodb-compass
-  nodejs
-  pnpm
-  onlyoffice-desktopeditors
-  telegram-desktop
-  alsa-utils
-  gh
-  docker
-  docker-compose
-  python3
-  python313Packages.pip
-  python313Packages.virtualenv
-  wl-clipboard
-  nitch
-  wine
-  zed-editor
-  dpkg
-  libepoxy
-  appimage-run
-  steam-run
-  nftables
-  steam
-  pgadmin4-desktopmode
-  postman
-  prisma
-  prisma-engines
-  nerd-fonts.jetbrains-mono
-  p7zip
-  libreoffice-qt
-  ripgrep
-  quickshell
-  cliphist
-  wireplumber
-  grim
-  slurp
-  matugen
-  kdePackages.qt5compat
-  kdePackages.qtpositioning
-  kdePackages.kirigami
-  kdePackages.qtdeclarative
-  kdePackages.qtbase
-  kdePackages.syntax-highlighting
-  foot
-  material-symbols
-  material-icons
-  kdePackages.qtquicktimeline
-  adementary-theme
-  kdePackages.dolphin
-  virtualbox
-  go
-  copilot-cli
-  fastfetch
-  v2rayn
-  v2ray
-  xray
-  v2ray-geoip
-  mihomo
-  sparkle
-  file
-  xorg.xhost
-  protobuf
-  protoc-gen-go
-  protoc-gen-go-grpc
-  libgccjit
-  goreman
-  bun
-  dpkg
-  jq
-  obsidian
-  helix
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    wget
+    vscode
+    git
+    mongodb-compass
+    nodejs
+    pnpm
+    onlyoffice-desktopeditors
+    telegram-desktop
+    alsa-utils
+    gh
+    docker
+    docker-compose
+    python3
+    python313Packages.pip
+    python313Packages.virtualenv
+    wl-clipboard
+    nitch
+    wine
+    zed-editor
+    dpkg
+    libepoxy
+    appimage-run
+    steam-run
+    nftables
+    steam
+    pgadmin4-desktopmode
+    prisma
+    prisma-engines
+    nerd-fonts.jetbrains-mono
+    p7zip
+    libreoffice-qt
+    ripgrep
+    quickshell
+    cliphist
+    wireplumber
+    grim
+    slurp
+    matugen
+    kdePackages.qt5compat
+    kdePackages.qtpositioning
+    kdePackages.kirigami
+    kdePackages.qtdeclarative
+    kdePackages.qtbase
+    kdePackages.syntax-highlighting
+    foot
+    material-symbols
+    material-icons
+    kdePackages.qtquicktimeline
+    adementary-theme
+    kdePackages.dolphin
+    virtualbox
+    go
+    copilot-cli
+    fastfetch
+    v2rayn
+    v2ray
+    xray
+    v2ray-geoip
+    mihomo
+    file
+    xorg.xhost
+    protobuf
+    protoc-gen-go
+    protoc-gen-go-grpc
+    libgccjit
+    goreman
+    bun
+    dpkg
+    jq
+    obsidian
+    helix
   ];
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -331,5 +327,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
-
 }
