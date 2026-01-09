@@ -1,15 +1,11 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    /home/artem/Happ/happ-desktop-nix/module.nix
   ];
 
   # Bootloader.
@@ -47,11 +43,29 @@
     LC_TIME = "ru_RU.UTF-8";
   };
 
+  services.happd = {
+    enable = true;
+
+    # ВАЖНО: явно указываем пакет
+    package = pkgs.callPackage /home/artem/Happ/happ-desktop-nix/default.nix {};
+  };
+
   # Virtualization
   virtualisation.docker.enable = true;
+  virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
+
+  programs.virt-manager.enable = true;
+
+  services.flatpak.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
 
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
@@ -86,10 +100,14 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+
+  programs.zsh.enable = true;
+
   users.users.artem = {
+    shell = pkgs.zsh;
     isNormalUser = true;
     description = "artem";
-    extraGroups = ["networkmanager" "wheel" "docker"];
+    extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm"];
     packages = with pkgs; [
       #  thunderbird
     ];
@@ -223,6 +241,7 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.overlays = [(import ./discord-overlay.nix)];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -231,7 +250,6 @@
     wget
     vscode
     git
-    mongodb-compass
     nodejs
     pnpm
     onlyoffice-desktopeditors
@@ -299,6 +317,9 @@
     jq
     obsidian
     helix
+    discord
+    tree
+    typst
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

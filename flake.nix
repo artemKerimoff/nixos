@@ -8,7 +8,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ambxst.url = "github:darsh032/ambxst-fork-for-pr-idk/nix";
+    ambxst.url = "github:axenide/ambxst";
   };
 
   outputs = inputs @ {
@@ -39,6 +39,7 @@
           home-manager.extraSpecialArgs = {
             inherit inputs ambxst;
           };
+          home-manager.backupFileExtension = "backup";
         }
       ];
     };
