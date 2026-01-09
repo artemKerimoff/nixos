@@ -241,7 +241,6 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [(import ./discord-overlay.nix)];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -317,9 +316,9 @@
     jq
     obsidian
     helix
-    discord
     tree
     typst
+    btop
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

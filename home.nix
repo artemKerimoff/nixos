@@ -17,6 +17,7 @@
   home.packages = [
     inputs.ambxst.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.zsh-powerlevel10k
+    pkgs.discord
   ];
 
   programs.zsh = {
@@ -26,5 +27,13 @@
       enable = true;
       plugins = ["git"];
     };
+  };
+
+  xdg.desktopEntries.discord = {
+    name = "Discord (wl version)";
+    exec = "discord --enable-features=UseOzonePlatform --ozone-platform=wayland --proxy-server=socks5://127.0.0.1:7890 %U";
+    icon = "discord";
+    terminal = false;
+    categories = ["Network" "InstantMessaging"];
   };
 }
