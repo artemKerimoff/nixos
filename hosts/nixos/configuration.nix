@@ -39,6 +39,12 @@
 
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
+  networking.nftables.enable = true;
+  networking.firewall.enable = true;
+  networking.firewall.checkReversePath = false;
+  networking.firewall.extraPackages = with pkgs; [
+    iptables
+  ];
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
@@ -51,6 +57,8 @@
   services.upower.enable = true;
 
   programs.fuse.userAllowOther = true;
+
+  virtualisation.waydroid.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -70,6 +78,8 @@
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
+  
+  services.flatpak.enable = true;
 
   services.displayManager.sddm = {
     enable = true;
@@ -85,10 +95,10 @@
       #type database  DBuser    auth-method
       local all       postgres  peer
       local all       all       md5
-      host  all postgres 127.0.0.1/32 md5
-      host  all postgres ::1/128      md5
-      host  all       student   127.0.0.1/32   md5
-      host  all       student   ::1/128        md5
+      host  all       postgres  127.0.0.1/32 md5
+      host  all       postgres  ::1/128      md5
+      host  all       student   127.0.0.1/32 md5
+      host  all       student   ::1/128      md5
     '';
   };
 
@@ -113,6 +123,13 @@
   # services.libinput.enable = true;
 
   services.input-remapper.enable = true;
+
+  services.syncthing = {
+    enable = true;
+    user = "artem";
+    dataDir = "/home/artem";
+    configDir = "/home/artem/.config/syncthing";
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.artem = {
@@ -153,11 +170,11 @@
   ];
 
 
-  environment.sessionVariables = {
-    _JAVA_AWT_WM_NONREPARENTING = "1";
-    _JAVA_OPTIONS = "-Dawt.toolkit.name=WLToolkit";
-    GDK_BACKEND = "wayland";
-  };
+  # environment.sessionVariables = {
+  #   _JAVA_AWT_WM_NONREPARENTING = "1";
+  #   _JAVA_OPTIONS = "-Dawt.toolkit.name=WLToolkit";
+  #   GDK_BACKEND = "wayland";
+  # };
 
 
   # programs.firefox.enable = true;
@@ -190,6 +207,19 @@
     labwc
     gpu-screen-recorder
     gpu-screen-recorder-gtk
+    wezterm
+    foot
+    dbeaver-bin
+    scrcpy
+    android-tools
+    bun
+    bubblewrap
+    python3
+    zip
+    unzip
+    onlyoffice-desktopeditors
+    jq
+    affinity-v3
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -206,7 +236,7 @@
   services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [ 22 3000 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;

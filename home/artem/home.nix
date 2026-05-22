@@ -42,6 +42,5 @@
     obsidian
     vesktop
     bibata-cursors
-    inputs.affinity-nix.packages.x86_64-linux.v3
   ];
 }

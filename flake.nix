@@ -33,12 +33,6 @@
   let
     system = "x86_64-linux";
 
-    overlay = final: prev: {
-      niri = (import nixpkgs-master {
-        inherit system;
-      }).niri;
-    };
-
   in {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {    
       inherit system;
@@ -47,8 +41,9 @@
         inherit inputs;
       };
       modules = [
-        ({ ... }: {
-          nixpkgs.overlays = [ overlay ];
+
+        ({ pkgs, ... }: {
+          nixpkgs.overlays = [ affinity-nix.overlays.default ];
         })
 
         ./hosts/nixos/configuration.nix
