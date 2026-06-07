@@ -27,9 +27,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     affinity-nix.url = "github:mrshmllow/affinity-nix";
+    codex-desktop.url = "github:ilysenko/codex-desktop-linux";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-master, home-manager, nur, affinity-nix, ... }:
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    nixpkgs-master,
+    home-manager,
+    nur,
+    affinity-nix,
+    codex-desktop,
+    ...
+  }:
   let
     system = "x86_64-linux";
 
@@ -48,6 +58,8 @@
 
         ./hosts/nixos/configuration.nix
         ./hosts/nixos/hardware-configuration.nix
+
+        ./pkgs/happ-nixos/happ-module.nix
 
         nur.modules.nixos.default
         nur.legacyPackages."${system}".repos.iopq.modules.xraya

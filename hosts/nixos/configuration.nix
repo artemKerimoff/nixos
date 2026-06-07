@@ -37,6 +37,14 @@
     enable32Bit = true;
   };
 
+  security.polkit.enable = true;
+  security.wrappers.gsr-kms-server = {
+    owner = "root";
+    group = "root";
+    capabilities = "cap_sys_admin+ep";
+    source = "${pkgs.gpu-screen-recorder}/bin/gsr-kms-server";
+  };
+
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
   networking.nftables.enable = true;
@@ -45,6 +53,9 @@
   networking.firewall.extraPackages = with pkgs; [
     iptables
   ];
+  networking.extraHosts = ''
+    127.0.0.1 gitlab.local
+  '';
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
@@ -56,9 +67,19 @@
 
   services.upower.enable = true;
 
+  services.happ.enable =  true;
+
   programs.fuse.userAllowOther = true;
 
+  virtualisation.docker.enable = true;
+
   virtualisation.waydroid.enable = true;
+
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu.swtpm.enable = true;
+  };
+  programs.virt-manager.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -74,12 +95,15 @@
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+    corefonts
   ];
 
   # Enable the X11 windowing system.
-  # services.xserver.enable = true;
+  services.xserver.enable = true;
   
   services.flatpak.enable = true;
+
+  services.gvfs.enable = true;
 
   services.displayManager.sddm = {
     enable = true;
@@ -121,6 +145,8 @@
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  xdg.portal.enable = true;
 
   services.input-remapper.enable = true;
 
@@ -134,12 +160,14 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.artem = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "input" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "input" "libvirtd" "kvm" "docker" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       tree
     ];
     shell = pkgs.fish;
   };
+
+  home-manager.backupFileExtension = "backup";
 
   programs.gamemode.enable = true;
 
@@ -154,7 +182,10 @@
    
   programs.appimage.enable = true;
 
-  programs.throne.enable = true;
+  programs.throne =  {
+    enable = true;
+    tunMode.enable = true;
+  };
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
   # Добавьте сюда библиотеки, которые нужны вашей программе
@@ -217,9 +248,20 @@
     python3
     zip
     unzip
-    onlyoffice-desktopeditors
     jq
     affinity-v3
+
+    # virt
+    qemu
+    virt-manager
+    virt-viewer
+    spice
+    spice-gtk
+    virtio-win
+    codex
+    bitwarden-desktop
+    drawio
+    spotify
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -237,6 +279,10 @@
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 22 3000 ];
+  networking.nat = {
+    enable = true;
+    internalInterfaces = [ "virbr0" ];
+  };
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
@@ -264,6 +310,5 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
-
 }
 

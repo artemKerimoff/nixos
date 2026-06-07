@@ -3,10 +3,17 @@
   imports = [
     inputs.noctalia.homeModules.default
     inputs.zen-browser.homeModules.beta
+    inputs.codex-desktop.homeManagerModules.default
   ];
 
   programs.zen-browser.enable = true;
   programs.noctalia-shell.enable = true;
+  programs.codexDesktopLinux = {
+    enable = true;
+    computerUseUi.enable = true;
+    remoteMobileControl.enable = true;
+    remoteControl.enable = true;
+  };
   
   home.username = "artem";
   home.homeDirectory = "/home/artem";
@@ -29,8 +36,10 @@
 
   programs.git = {
     enable = true;
-    userName = "artemKerimoff";
-    userEmail = "4bsolutefleur@gmail.com";
+    settings = {  
+      user.name = "artemKerimoff";
+      user.email = "4bsolutefleur@gmail.com";
+    };
   };
   
   programs.zsh.enable = true;

@@ -1,0 +1,3 @@
+[submodule "pkgs/happ-nixos"]
+	path = pkgs/happ-nixos
+	url = https://github.com/MrShitFox/happ-nixos
