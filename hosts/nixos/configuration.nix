@@ -4,6 +4,11 @@
 
 { config, lib, pkgs, inputs, ... }:
 
+let
+  nixpkgs-codex = import inputs.nixpkgs-codex {
+      system = pkgs.system;
+  };
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -37,6 +42,9 @@
     enable32Bit = true;
   };
 
+  security.pam.services.sddm.enableGnomeKeyring = true;
+  services.gnome.gnome-keyring.enable = true;  # если ещё не включено
+
   security.polkit.enable = true;
   security.wrappers.gsr-kms-server = {
     owner = "root";
@@ -47,9 +55,9 @@
 
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
-  networking.nftables.enable = true;
-  networking.firewall.enable = true;
-  networking.firewall.checkReversePath = false;
+  networking.nftables.enable = false;
+  networking.firewall.enable = false;
+  # networking.firewall.checkReversePath = false;
   networking.firewall.extraPackages = with pkgs; [
     iptables
   ];
@@ -64,16 +72,15 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-39.8.10"
+  ];
 
   services.upower.enable = true;
-
-  services.happ.enable =  true;
 
   programs.fuse.userAllowOther = true;
 
   virtualisation.docker.enable = true;
-
-  virtualisation.waydroid.enable = true;
 
   virtualisation.libvirtd = {
     enable = true;
@@ -81,12 +88,22 @@
   };
   programs.virt-manager.enable = true;
 
+  programs.happ = {
+    enable = true;
+    tunMode.enable = true;
+  };
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.supportedLocales = [
+    "en_US.UTF-8/UTF-8"
+    "ru_RU.UTF-8/UTF-8"
+  ];
+
   # console = {
   #   font = "Lat2-Terminus16";
   #   keyMap = "us";
@@ -96,7 +113,9 @@
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
     corefonts
+    roboto
   ];
+  fonts.fontDir.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -109,7 +128,6 @@
     enable = true;
     wayland.enable = true;
   };
-
 
   services.postgresql = {
     enable = true;
@@ -148,8 +166,6 @@
   services.desktopManager.plasma6.enable = true;
   xdg.portal.enable = true;
 
-  services.input-remapper.enable = true;
-
   services.syncthing = {
     enable = true;
     user = "artem";
@@ -164,23 +180,35 @@
     packages = with pkgs; [
       tree
     ];
-    shell = pkgs.fish;
+    shell = pkgs.nushell;
   };
 
   home-manager.backupFileExtension = "backup";
 
   programs.gamemode.enable = true;
 
-  programs.steam.enable = true;
+  programs.steam = {
+    enable = true;
+    package = pkgs.millennium-steam;
+  };
   hardware.steam-hardware.enable = true;
   programs.fish.enable = true;
 
-  programs.niri = {
+  programs.hyprland = {
     enable = true;
-    useNautilus = true;
+    xwayland.enable = true;
   };
-   
-  programs.appimage.enable = true;
+
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  
+    package = pkgs.appimage-run.override {
+      extraPkgs = pkgs: [
+        pkgs.libepoxy
+      ];
+    };
+  }; 
 
   programs.throne =  {
     enable = true;
@@ -215,13 +243,8 @@
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
-    helix
     kitty
     telegram-desktop
-    v2rayn
-    xwayland-satellite
-    jetbrains.pycharm
-    neovim-unwrapped
     libreoffice-fresh
     protonup-qt
     nur.repos.Ev357.helium
@@ -233,13 +256,10 @@
     fish
     cool-retro-term
     qbittorrent
-    input-remapper
     fishPlugins.tide
     labwc
     gpu-screen-recorder
     gpu-screen-recorder-gtk
-    wezterm
-    foot
     dbeaver-bin
     scrcpy
     android-tools
@@ -249,7 +269,6 @@
     zip
     unzip
     jq
-    affinity-v3
 
     # virt
     qemu
@@ -258,10 +277,27 @@
     spice
     spice-gtk
     virtio-win
-    codex
+    nixpkgs-codex.codex
     bitwarden-desktop
     drawio
     spotify
+    btop
+    kdePackages.kdenlive
+    yt-dlp
+    ilspycmd
+    davinci-resolve
+    ffmpeg
+    claude-desktop
+    claude-code
+    chromium
+    umu-launcher
+    faugus-launcher
+    typst
+    fastfetch
+    wl-clipboard
+    cliphist
+    pulseaudio
+    opencode
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -281,7 +317,10 @@
   networking.firewall.allowedTCPPorts = [ 22 3000 ];
   networking.nat = {
     enable = true;
-    internalInterfaces = [ "virbr0" ];
+    internalInterfaces = [
+      "virbr0"
+      "docker0"
+    ];
   };
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
@@ -311,4 +350,3 @@
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
 }
-
